@@ -3,9 +3,12 @@ const nextConfig = {
   serverExternalPackages: [
     "@moss-dev/moss",
     "@moss-dev/moss-core",
-    "@huggingface/transformers",
-    "onnxruntime-node",
   ],
+  turbopack: {
+    resolveAlias: {
+      "onnxruntime-node": "onnxruntime-web",
+    },
+  },
 };
 
 export default nextConfig;

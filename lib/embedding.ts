@@ -1,13 +1,29 @@
-import { pipeline, type FeatureExtractionPipeline } from "@huggingface/transformers";
+import {
+  env,
+  pipeline,
+  type DeviceType,
+  type FeatureExtractionPipeline,
+} from "@huggingface/transformers";
 import { PipeError } from "./types";
 
 const MODEL_ID = (process.env.EMBEDDING_MODEL_ID ?? "Xenova/all-MiniLM-L6-v2").trim();
+
+// Force the WASM/WebAssembly onnx backend. This removes the need for the
+// native `libonnxruntime.so.1` shared object (onnxruntime-node native), which
+// is not available on serverless runtimes like Vercel. Setting numThreads to 1
+// runs a single-threaded WASM build that is fully self-contained.
+const wasmBackend = env.backends.onnx.wasm;
+if (wasmBackend) wasmBackend.numThreads = 1;
 
 export const EMBEDDING_DIMENSION = 384;
 
 type EmbeddingPipeline = FeatureExtractionPipeline;
 
-type PipelineFactory = (task: string, modelId: string) => Promise<unknown>;
+type PipelineFactory = (
+  task: string,
+  modelId: string,
+  options?: { device?: DeviceType }
+) => Promise<unknown>;
 
 let pipelinePromise: Promise<EmbeddingPipeline> | null = null;
 
@@ -16,7 +32,8 @@ function getPipeline(): Promise<EmbeddingPipeline> {
     try {
       const extractor = await (pipeline as PipelineFactory)(
         "feature-extraction",
-        MODEL_ID
+        MODEL_ID,
+        { device: "wasm" }
       );
       return extractor as EmbeddingPipeline;
     } catch {
