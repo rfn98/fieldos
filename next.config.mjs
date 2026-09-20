@@ -2,6 +2,7 @@
 const nextConfig = {
   transpilePackages: [
     "@huggingface/transformers",
+    "onnxruntime-web",
   ],
 
   serverExternalPackages: [
