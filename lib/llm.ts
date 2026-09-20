@@ -47,6 +47,7 @@ export async function completeChat(params: LlmCompleteParams): Promise<LlmComple
         stream: false,
         options: {
           temperature: 0.1,
+          num_predict: 250,
         },
       }),
     });

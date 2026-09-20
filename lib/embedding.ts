@@ -32,12 +32,14 @@ function getPipeline(): Promise<EmbeddingPipeline> {
     try {
       const extractor = await (pipeline as PipelineFactory)(
         "feature-extraction",
-        MODEL_ID,
-        { device: "wasm" }
+        MODEL_ID
       );
       return extractor as EmbeddingPipeline;
-    } catch {
+    } catch (error) {
       pipelinePromise = null;
+
+      console.error("[embedding] Failed to load model:", error);
+
       throw new PipeError(
         "moss_config",
         503,

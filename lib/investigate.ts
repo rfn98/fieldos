@@ -49,7 +49,9 @@ export async function investigate(input: InvestigateInput): Promise<InvestigateR
 
   const startedAt = performance.now();
 
+  console.time("[investigate] moss");
   const retrieval = await queryMoss(question, TOP_K);
+  console.timeEnd("[investigate] moss");
 
   const evidence: Evidence[] = retrieval.docs.map((doc) => {
     const metadata = doc.metadata;
@@ -57,7 +59,7 @@ export async function investigate(input: InvestigateInput): Promise<InvestigateR
       id: doc.id,
       type: metadata.type ?? "unknown",
       assetId: metadata.asset_id ?? "unknown",
-      plantId: metadata.plant_id,
+      plantId: metadata.plantId,
       severity: metadata.severity,
       category: metadata.category,
       date: metadata.date,
@@ -66,6 +68,7 @@ export async function investigate(input: InvestigateInput): Promise<InvestigateR
     };
   });
 
+  console.time("[investigate] llm");
   const llm = await completeChat({
     system: SYSTEM_PROMPT,
     user: buildUserPrompt(
@@ -79,6 +82,11 @@ export async function investigate(input: InvestigateInput): Promise<InvestigateR
       }))
     ),
   });
+  console.timeEnd("[investigate] llm");
+
+  console.log(
+    `[investigate] total: ${Math.round(performance.now() - startedAt)}ms`
+  );
 
   return {
     answer: llm.content,

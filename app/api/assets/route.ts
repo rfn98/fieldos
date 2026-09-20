@@ -35,7 +35,7 @@ export async function GET(): Promise<NextResponse> {
     });
 
     return NextResponse.json({
-      assets: assets.map((asset) => ({
+      assets: assets.map((asset: any) => ({
         id: asset.id,
         code: asset.code,
         name: asset.name,

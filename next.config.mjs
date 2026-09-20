@@ -4,9 +4,13 @@ const nextConfig = {
     "@moss-dev/moss",
     "@moss-dev/moss-core",
   ],
+
   turbopack: {
     resolveAlias: {
-      "onnxruntime-node": "onnxruntime-web",
+      "onnxruntime-node": {
+        browser: "onnxruntime-web",
+        default: "onnxruntime-web",
+      },
     },
   },
 };
