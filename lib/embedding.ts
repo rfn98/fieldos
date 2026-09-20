@@ -9,6 +9,8 @@ const MODEL_ID = (
   process.env.EMBEDDING_MODEL_ID ?? "Xenova/all-MiniLM-L6-v2"
 ).trim();
 
+env.cacheDir = "/tmp/transformers-cache";
+
 const wasmBackend = env.backends.onnx.wasm;
 
 if (wasmBackend) {
