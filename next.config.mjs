@@ -10,13 +10,16 @@ const nextConfig = {
     "@moss-dev/moss-core",
   ],
 
-  turbopack: {
-    resolveAlias: {
-      "onnxruntime-node": {
-        browser: "onnxruntime-web",
-        default: "onnxruntime-web",
-      },
-    },
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.resolve.alias = {
+        ...(config.resolve.alias ?? {}),
+        "onnxruntime-node": "onnxruntime-web",
+        sharp: false,
+      };
+    }
+
+    return config;
   },
 };
 
